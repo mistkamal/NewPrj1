@@ -5,6 +5,9 @@ import { z } from "zod"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../components/ui/form"
 import { Input } from "../components/ui/input"
 import { Button } from "../components/ui/button"
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from '../lib/firebase'
+import { useNavigate } from "react-router-dom"
 
 const formSchema = z.object({
     //username: z.string().min(2).max(50),
@@ -12,27 +15,30 @@ const formSchema = z.object({
     password: z.string().min(5, {
         message: "atleast 5 Charecter should be present"
     }),
-    confirmpassword: z.string(),
-}).refine((data)=>data.password === data.confirmpassword,{
-    path:['confirmpassword'],
-    message:"password Not Matched"
 })
 
 const LoginForm = () => {
+    const navigate = useNavigate()
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             //username: "",
             email: "",
             password: "",
-            confirmpassword: ""
         },
     })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values)
+   async function onSubmit(values: z.infer<typeof formSchema>) {
+           await signInWithEmailAndPassword(auth, values.email,values.password)
+            .then((userCredential) => {
+                const user = userCredential.user;
+                console.log(user)
+                navigate("/")
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+            });
     }
 
     return (
@@ -47,7 +53,7 @@ const LoginForm = () => {
                             <FormControl>
                                 <Input placeholder="enetr email" {...field} />
                             </FormControl>
-                            
+
                             <FormMessage />
                         </FormItem>
                     )}
@@ -59,28 +65,14 @@ const LoginForm = () => {
                         <FormItem>
                             <FormLabel>Password</FormLabel>
                             <FormControl>
-                                <Input placeholder="set password" {...field} type="password"/>
+                                <Input placeholder="set password" {...field} type="password" />
                             </FormControl>
-                            
+
                             <FormMessage />
                         </FormItem>
                     )}
                 />
-                <FormField
-                    control={form.control}
-                    name="confirmpassword"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Confirm Password</FormLabel>
-                            <FormControl>
-                                <Input placeholder="reenter password" {...field} />
-                            </FormControl>
-                            
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <Button type="submit">Submit</Button>
+                <Button type="submit" className="w-full">LogIn</Button>
             </form>
         </Form>
     )
