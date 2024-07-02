@@ -9,16 +9,16 @@ import { auth, db } from '../lib/firebase'
 //import { useNavigate } from "react-router-dom"
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group"
 import { Calendar } from "../components/ui/calendar"
-import {Popover,PopoverContent,PopoverTrigger,} from "../components/ui/popover"
+import { Popover, PopoverContent, PopoverTrigger, } from "../components/ui/popover"
 import { CalendarIcon } from "lucide-react"
 import { cn } from "../lib/utils"
 import { format } from "date-fns"
-import { collection, addDoc } from "firebase/firestore"; 
+import { collection, addDoc } from "firebase/firestore";
 
 const formSchema = z.object({
     title: z.string().min(2, { message: "Minimum 2 Character required" }),
     description: z.string().optional(),
-    amount: z.string().transform((v) => Number(v)||0),
+    amount: z.string().transform((v) => Number(v) || 0),
     transactiontype: z.string(),
     date: z.date(),
 })
@@ -31,22 +31,21 @@ const TransactionForm = () => {
             title: "",
             description: "",
             amount: 0,
-            transactiontype: "",
-            
+            transactiontype: ""
         },
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values,auth.currentUser)
+        console.log(values, auth.currentUser)
         const docRef = await addDoc(collection(db, "transaction"), {
-            userid:auth.currentUser?.uid,
+            userid: auth.currentUser?.uid,
             title: values.title,
             description: values.description,
-            amount:values.amount,
-            type:values.transactiontype,
-            date:values.date,
-          });
-          console.log("Document written with ID: ", docRef.id);
+            amount: values.amount,
+            type: values.transactiontype,
+            date: values.date,
+        });
+        console.log("Document written with ID: ", docRef.id);
     }
 
     return (
@@ -88,7 +87,7 @@ const TransactionForm = () => {
                         <FormItem>
                             <FormLabel>Amount</FormLabel>
                             <FormControl>
-                                <Input placeholder="enter amount" {...field} type="number"/>
+                                <Input placeholder="enter amount" {...field} type="number" />
                             </FormControl>
 
                             <FormMessage />
@@ -141,7 +140,7 @@ const TransactionForm = () => {
                                 <PopoverTrigger asChild>
                                     <FormControl>
                                         <Button variant={"outline"} className={cn("w-[240px] pl-3 text-left font-normal",
-                                                !field.value && "text-muted-foreground")}>
+                                            !field.value && "text-muted-foreground")}>
                                             {field.value ? (
                                                 format(field.value, "PPP")
                                             ) : (
@@ -163,7 +162,7 @@ const TransactionForm = () => {
                                     />
                                 </PopoverContent>
                             </Popover>
-                            
+
                             <FormMessage />
                         </FormItem>
                     )}

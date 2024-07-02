@@ -8,6 +8,7 @@ import { Button } from "../components/ui/button"
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../lib/firebase'
 import { useNavigate } from "react-router-dom"
+import { useStore } from '../store'
 
 const formSchema = z.object({
     //username: z.string().min(2).max(50),
@@ -18,6 +19,8 @@ const formSchema = z.object({
 })
 
 const LoginForm = () => {
+    const { loggedIn,logIn,logOut } :any = useStore()
+
     const navigate = useNavigate()
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -33,6 +36,7 @@ const LoginForm = () => {
             .then((userCredential) => {
                 const user = userCredential.user;
                 console.log(user)
+                logIn()
                 navigate("/")
             })
             .catch((error) => {
@@ -41,6 +45,8 @@ const LoginForm = () => {
                 console.log(errorCode,errorMessage)
             });
     }
+
+    console.log(loggedIn,logIn,logOut)
 
     return (
         <Form {...form}>

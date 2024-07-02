@@ -14,37 +14,47 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { db } from "../lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
-import { date } from "zod";
+import { DataTable } from "../components/transactionDatatable";
+import { columns } from "../components/ui/transactioncolumns";
+import { useStore } from '../store'
 
 const Home = () => {
   // const [loggedIn, setLoggedIn] = useState(false)
+  const {loggedIn,logOut}:any = useStore()
   const navigate = useNavigate()
   const [transactionList, settransactionList] = useState([{
     amount: 0,
-    date: date,
     description: "",
     title: "",
     type: "",
-    userid: "",
-  },])
+    userid: "",}])
+
   async function signout() {
+    logOut()
     await signOut(auth).then(
       () => navigate('/login')
     )
   }
 
-  async function getData() {
-    const querySnapshot = await getDocs(collection(db, "transaction"));
-    let list:any = [] 
-    querySnapshot.forEach((doc) => {
-      list.push(doc.data())
-    });
-    settransactionList(list)
-    console.log(transactionList,"Kamal")
-  }
-
   useEffect(() => {
-    getData()
+        if(!loggedIn)
+        {
+          navigate("/login")
+        }
+
+        const getdata = async() => {
+
+          // const q = query(collection(db, "transaction"), where("type","==","Income"))  
+          // const querySnapshot = await getDocs(q);
+        const querySnapshot = await getDocs(collection(db, "transaction"));
+        let list: any = [] 
+        querySnapshot.forEach((doc) => {
+          list.push(doc.data())
+        });
+        settransactionList(list)
+    }
+    getdata()
+    console.log(transactionList, "Kamal")
   }, [])
 
   return (
@@ -63,6 +73,9 @@ const Home = () => {
           <TransactionForm></TransactionForm>
         </DialogContent>
       </Dialog>
+
+      <DataTable columns={columns} data={transactionList}></DataTable>
+
     </>
   )
 }
