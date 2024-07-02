@@ -1,18 +1,18 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { date, z } from "zod"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../components/ui/form"
+import { z } from "zod"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../components/ui/form"
 import { Input } from "../components/ui/input"
 import { Button } from "../components/ui/button"
 import { auth, db } from '../lib/firebase'
-import { useNavigate } from "react-router-dom"
+//import { useNavigate } from "react-router-dom"
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group"
 import { Calendar } from "../components/ui/calendar"
 import {Popover,PopoverContent,PopoverTrigger,} from "../components/ui/popover"
 import { CalendarIcon } from "lucide-react"
 import { cn } from "../lib/utils"
-import { format, getDate } from "date-fns"
+import { format } from "date-fns"
 import { collection, addDoc } from "firebase/firestore"; 
 
 const formSchema = z.object({
@@ -24,7 +24,7 @@ const formSchema = z.object({
 })
 
 const TransactionForm = () => {
-    const navigate = useNavigate()
+    //const navigate = useNavigate()
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {

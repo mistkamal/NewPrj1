@@ -2,6 +2,9 @@ import { BrowserRouter, Routes, Route} from 'react-router-dom'
 import Home from './pages/home'
 import login from './pages/login'
 import register from './pages/register'
+
+//import { auth } from './lib/firebase'
+
 function App() {
   return (
     <>
