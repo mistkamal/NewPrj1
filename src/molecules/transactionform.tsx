@@ -13,7 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger, } from "../components/ui/popov
 import { CalendarIcon } from "lucide-react"
 import { cn } from "../lib/utils"
 import { format } from "date-fns"
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc,setDoc, doc } from "firebase/firestore";
 
 const formSchema = z.object({
     title: z.string().min(2, { message: "Minimum 2 Character required" }),
@@ -36,8 +36,7 @@ const TransactionForm = () => {
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values, auth.currentUser)
-        const docRef = await addDoc(collection(db, "transaction"), {
+      await  setDoc(doc(db, "transaction",values.title), {
             userid: auth.currentUser?.uid,
             title: values.title,
             description: values.description,
@@ -45,8 +44,7 @@ const TransactionForm = () => {
             type: values.transactiontype,
             date: values.date,
         });
-        console.log("Document written with ID: ", docRef.id);
-    }
+    }   
 
     return (
         <Form {...form}>
